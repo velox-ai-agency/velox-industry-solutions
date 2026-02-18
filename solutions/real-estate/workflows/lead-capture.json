@@ -1,0 +1,45 @@
+{
+  "name": "Real Estate Lead Capture",
+  "nodes": [
+    {
+      "name": "WhatsApp Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "realestate-lead"
+      }
+    },
+    {
+      "name": "Process Lead",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [450, 300],
+      "parameters": {
+        "values": {
+          "string": [
+            {"name": "name", "value": "={{$json.name}}"},
+            {"name": "phone", "value": "={{$json.from}}"},
+            {"name": "property_type", "value": "={{$json.property_type}}"},
+            {"name": "budget", "value": "={{$json.budget}}"},
+            {"name": "location", "value": "={{$json.location}}"},
+            {"name": "status", "value": "new"},
+            {"name": "created_at", "value": "={{$now.toISO()}}"}
+          ]
+        }
+      }
+    },
+    {
+      "name": "Save to Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [650, 300],
+      "parameters": {
+        "operation": "append",
+        "documentId": "YOUR_SHEET_ID",
+        "sheetName": "Leads"
+      }
+    }
+  ]
+}
